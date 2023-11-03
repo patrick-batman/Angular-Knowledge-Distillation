@@ -1,6 +1,6 @@
 Lightweight Face Recognition via Shrinking Teacher-Student Networks
 =================================================
-This repository contains an implementation of the distillation methods compared in this [paper](https://arxiv.org/pdf/2003.02586v1.pdf). Using the code from this repository, you can train a lightweight network to recognize faces for embedded devices.
+This repository contains an implementation of the distillation method mentioned in this [paper](https://arxiv.org/abs/1905.10620). Using the code from this repository, you can train a lightweight network to recognize faces for embedded devices.
 
 <br>
 
@@ -9,7 +9,7 @@ This repository contains an implementation of the distillation methods compared 
   1) Download dataset from [here](https://drive.google.com/file/d/1KxNCrXzln0lal3N4JiYl9cFOIhT78y1l/view).
   2) Extract images using [this](https://github.com/david-svitov/margindistillation/blob/master/data_prepare/bin_get_images.ipynb).
   3) Get the labels for each image and create annotations.csv using: create_annotation.ipynb
-  4) Or get download dataset from [here](https://iitbhuacin-my.sharepoint.com/:u:/g/personal/rakshit_sawhney_ece21_iitbhu_ac_in/ERjGwLCISttBvIfvunv4oIkB_ZoRw5WkbB8smZguNc6nyQ?e=3Bylo8) to skip above 3 steps.
+  4) Or get download dataset from [here](https://iitbhuacin-my.sharepoint.com/:u:/g/personal/rakshit_sawhney_ece21_iitbhu_ac_in/ERjGwLCISttBvIfvunv4oIkB_ZoRw5WkbB8smZguNc6nyQ?e=3Bylo8) to skip above 2 steps.
   5) Create a folder in home directory by the name of CASIA_dataset
   6) Save the Images Folder and annotations.csv in it
 
