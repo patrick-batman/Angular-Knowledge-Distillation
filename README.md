@@ -6,10 +6,10 @@ This repository contains an implementation of the distillation methods compared 
 
 # Data preparation
 
-  1) Download dataset (insert link here)
-  2) Extract images using (find train.rec extractor and attatch here)
+  1) Download dataset from [here](https://drive.google.com/file/d/1KxNCrXzln0lal3N4JiYl9cFOIhT78y1l/view).
+  2) Extract images using [this](https://github.com/david-svitov/margindistillation/blob/master/data_prepare/bin_get_images.ipynb).
   3) Get the labels for each image and create annotations.csv using: create_annotation.ipynb
-  4) Or get download dataset from [here]() to skip above 2 steps.
+  4) Or get download dataset from [here](https://iitbhuacin-my.sharepoint.com/:u:/g/personal/rakshit_sawhney_ece21_iitbhu_ac_in/ERjGwLCISttBvIfvunv4oIkB_ZoRw5WkbB8smZguNc6nyQ?e=3Bylo8) to skip above 3 steps.
   5) Create a folder in home directory by the name of CASIA_dataset
   6) Save the Images Folder and annotations.csv in it
 
@@ -74,4 +74,8 @@ Submit the Job to SLURM for completion.<br>
 ```
 sbatch script.sh
 ```
+
+## Contributors
+- [Raunak Pandey](https://github.com/patrick-batman)
+- [Rakshit Sawhney](https://github.com/RakshitSawhney)
 
