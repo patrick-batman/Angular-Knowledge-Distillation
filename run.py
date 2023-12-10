@@ -1,6 +1,6 @@
 import torch
-from utils import create_train_loader
-from models import train_cosine_loss , student_model , teacher_model
+from utils import create_loader
+from models import train_cosine_loss , student_model , teacher_model, test_model
 # from models import student_model , teacher_model
 
 # print(f"PyTorch version: {torch.__version__}")
@@ -22,14 +22,16 @@ parser.add_argument("--device")
 args = parser.parse_args()
 
 # Hyperparameters
-batch_size = 8
-num_epochs = 10
-learning_rate = 0.1
+batch_size = 512
+num_epochs = 20
+learning_rate = 0.001
 temperature = 3  # Temperature for softened distribution
-lmbda = 0.25
+lmbda = 0.5  # Lambda parameter for loss weighting
 momentum = 0.9
 num_workers = 0
-device = "cpu"
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+print("Using device: {} ".format(device))
 
 
 if(args.batchsize):
@@ -58,5 +60,8 @@ print(args)
 
 
 
-train_loader = create_train_loader(batch_size= batch_size , num_workers= num_workers)
-train_cosine_loss(teacher_model,student_model,train_loader,num_epochs,learning_rate,lmbda,1-lmbda,device)
+train_loader, test_loader = create_loader(batch_size= batch_size , num_workers= num_workers)
+
+train_cosine_loss(teacher_model,student_model,train_loader,num_epochs,learning_rate,lmbda,1-lmbda,device, log_file="loss_log.txt")
+
+test_model(student_model,test_loader,device)

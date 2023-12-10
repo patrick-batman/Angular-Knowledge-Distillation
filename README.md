@@ -32,7 +32,7 @@ python3 run.py
 |:----------------|:--------------------:|:----------------------------------------------
 |batchsize        |  8                   | batch size
 |epochs           |  10                  | number of epochs to train
-|lr               |  0.1                 | learning rate
+|lr               |  0.001               | learning rate
 |lmda             |  0.25                | lambda
 |device           |  cpu                 | device using (eg. cuda , mps)
 |workers          |  0                   | number of workers
