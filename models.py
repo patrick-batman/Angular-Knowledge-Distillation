@@ -6,6 +6,7 @@ import torch.optim as optim
 import torchvision.transforms as transforms
 import pandas as pd
 from utils import mtcnn
+import os
 
 # print(f"PyTorch version: {torch.__version__}")
 # device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -15,6 +16,8 @@ from utils import mtcnn
 root_dir ="CASIA_dataset/Images"
 model_save_dir = "output_logs"
 
+if not os.path.exists(model_save_dir):
+        os.makedirs(model_save_dir)
 
 # For a teacher model pretrained on CASIA-Webface
 from facenet_pytorch import InceptionResnetV1
@@ -51,7 +54,7 @@ print("done loading models")
 
 
 #TRAINING LOSS FUNCTION
-def train_cosine_loss(teacher, student, train_loader, epochs, learning_rate, hidden_rep_loss_weight, ce_loss_weight, device):
+def train_cosine_loss(teacher, student, train_loader, epochs, learning_rate, hidden_rep_loss_weight, ce_loss_weight, device, log_file="loss_log.txt"):
     ce_loss = nn.CrossEntropyLoss()
     cosine_loss = nn.CosineEmbeddingLoss()
     optimizer = optim.Adam(student.parameters(), lr=learning_rate)
@@ -60,6 +63,8 @@ def train_cosine_loss(teacher, student, train_loader, epochs, learning_rate, hid
     student.to(device)
     teacher.eval()  # Teacher set to evaluation mode
     student.train() # Student to train mode
+
+    loss_values = []  # List to store loss values
 
     for epoch in range(epochs):
         running_loss = 0.0
@@ -105,8 +110,30 @@ def train_cosine_loss(teacher, student, train_loader, epochs, learning_rate, hid
             torch.save({
                         'epoch': EPOCH,
                         'model_state_dict': student_model.state_dict(),
-                        'optimizer_state_dict': optimizer.state_dict(),
+                        # 'optimizer_state_dict': optimizer.state_dict(),-*
                         'loss': LOSS,
                         }, PATH)    
-
+            
         print(f"Epoch {epoch+1}/{epochs}, Loss: {running_loss / len(train_loader)}")
+        
+    # Save loss values to a file
+    log_file_path = os.join(model_save_dir, log_file)
+    with open(log_file_path, 'w') as f:
+        for loss_value in loss_values:
+            f.write(f"{loss_value}\n")
+
+
+
+
+def test_model(model, test_loader, device):
+    model.eval()  # Set model to evaluation mode
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for inputs, labels in test_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+            outputs,_,_ = model(inputs)
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum()
+    print(f"Accuracy: {100 * correct / total}")

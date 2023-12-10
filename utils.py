@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from PIL import Image
-
+import torch
 # MTCNN
 
 
@@ -58,9 +58,16 @@ dataset = PeopleDataset(
     default_label=label_default,
     default_img=img_cropped_default
 )
+
+
 # DATA LOADER
-def create_train_loader(batch_size , num_workers):
-    train_loader = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=False,num_workers=num_workers)
-    return train_loader
+def create_loader(batch_size , num_workers):
+
+    train_set , test_set = torch.utils.data.random_split(dataset, [int(len(dataset)*0.8), len(dataset)-int(len(dataset)*0.8 )])
+
+    train_loader = DataLoader(dataset=train_set, batch_size=batch_size, shuffle=True, num_workers=num_workers)
+    test_loader = DataLoader(dataset=test_set, batch_size=batch_size, shuffle=True, num_workers=num_workers)
+
+    return train_loader, test_loader
 
 
