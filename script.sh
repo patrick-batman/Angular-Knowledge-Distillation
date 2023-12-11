@@ -10,5 +10,5 @@
 
 source /../miniconda3/bin/activate
 conda activate pytorch_gpu
-python3 run.py 
+python3 train.py --batch-size 256 --epochs 30 --lr 0.001 --lmda 0.5 --workers 40 --device cuda
 

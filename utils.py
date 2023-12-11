@@ -61,13 +61,12 @@ dataset = PeopleDataset(
 
 
 # DATA LOADER
-def create_loader(batch_size , num_workers):
+def create_loader(batch_size , num_workers, fraction=1):
 
-    train_set , test_set = torch.utils.data.random_split(dataset, [int(len(dataset)*0.8), len(dataset)-int(len(dataset)*0.8 )])
-
+    # creater a data loader on the given fraction of dataset (default = 1)
+    train_set , _ = torch.utils.data.random_split(dataset, [int(len(dataset)*fraction), len(dataset)-int(len(dataset)*fraction )])
     train_loader = DataLoader(dataset=train_set, batch_size=batch_size, shuffle=True, num_workers=num_workers)
-    test_loader = DataLoader(dataset=test_set, batch_size=batch_size, shuffle=True, num_workers=num_workers)
 
-    return train_loader, test_loader
+    return train_loader
 
 
