@@ -23,7 +23,7 @@ mkdir output_logs
 
 Start training using:
 ```
-python3 run.py
+python3 train.py
 ```
 
 
@@ -39,6 +39,26 @@ python3 run.py
 
 
 <br>
+
+# Evaluation
+
+Evaluate using:
+```
+python3 eval.py
+```
+
+
+## Additional flags
+|Flag             | Default Value        |Description
+|:----------------|:--------------------:|:----------------------------------------------
+|batchsize        |  8                   | batch size
+|device           |  cpu                 | device using (eg. cuda , mps)
+|workers          |  0                   | number of workers
+|test-size        |  0.1                 | size of dataset for evaluation
+|model-path       |  None (required)     | path of model for evaluation
+
+<br>
+
 
 
 # Using HPC

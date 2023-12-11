@@ -46,13 +46,6 @@ student_model = CustomModel(student_model_base)
 
 
 
-
-### Move models to device
-# student_model = student_model.to(device)
-# teacher_model = teacher_model.to(device)
-print("done loading models")
-
-
 #TRAINING LOSS FUNCTION
 def train_cosine_loss(teacher, student, train_loader, epochs, learning_rate, hidden_rep_loss_weight, ce_loss_weight, device, log_file="loss_log.txt"):
     ce_loss = nn.CrossEntropyLoss()
@@ -110,7 +103,7 @@ def train_cosine_loss(teacher, student, train_loader, epochs, learning_rate, hid
             torch.save({
                         'epoch': EPOCH,
                         'model_state_dict': student_model.state_dict(),
-                        # 'optimizer_state_dict': optimizer.state_dict(),-*
+                        'optimizer_state_dict': optimizer.state_dict(),
                         'loss': LOSS,
                         }, PATH)    
             
@@ -124,16 +117,20 @@ def train_cosine_loss(teacher, student, train_loader, epochs, learning_rate, hid
 
 
 
-
-def test_model(model, test_loader, device):
+# EVALUATE STUDENT MODEL
+def check_accuracy(model, test_loader, device):
     model.eval()  # Set model to evaluation mode
     correct = 0
     total = 0
     with torch.no_grad():
-        for inputs, labels in test_loader:
+        progress_bar = tqdm(test_loader, leave=False)
+        for i, (inputs, labels) in enumerate(progress_bar):
             inputs, labels = inputs.to(device), labels.to(device)
             outputs,_,_ = model(inputs)
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum()
+
+            progress_bar.set_postfix({"Current Accuracy": correct / (total)})  # Update the progress bar
+
     print(f"Accuracy: {100 * correct / total}")
