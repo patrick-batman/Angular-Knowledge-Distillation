@@ -1,0 +1,20 @@
+==========================================
+SLURM_CLUSTER_NAME = param-shivay
+SLURM_JOB_ACCOUNT = electronics_engg
+SLURM_JOB_ID = 927413
+SLURM_JOB_NAME = paper14
+SLURM_JOB_NODELIST = gpu004
+SLURM_JOB_USER = rakshits.ece21.iitbhu
+SLURM_JOB_UID = 5972
+SLURM_JOB_PARTITION = gpu
+SLURM_TASK_PID = 221295
+SLURM_SUBMIT_DIR = /home/rakshits.ece21.iitbhu/ub14
+SLURM_CPUS_ON_NODE = 40
+SLURM_NTASKS = 40
+SLURM_TASK_PID = 221295
+==========================================
+Namespace(batchsize=256, workers=40, device='cuda', test_size=0.1, model_path='/home/rakshits.ece21.iitbhu/ub14/output_logs/model20.pt')
+Using device: cuda 
+Evaluating on random 50k samples
+Model loaded from epoch 20 with loss 731.9438086152077
+Accuracy: 98.11258697509766

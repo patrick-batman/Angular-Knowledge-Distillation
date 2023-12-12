@@ -35,6 +35,7 @@ python3 train.py
 |lr               |  0.001               | learning rate
 |lmda             |  0.25                | lambda
 |device           |  cpu                 | device using (eg. cuda , mps)
+|save-dir         |  output_logs         | folder to save model
 |workers          |  0                   | number of workers
 
 
@@ -59,7 +60,17 @@ python3 eval.py
 
 <br>
 
+# Performance:
 
+### CASIA-WebFace
+
+| lambda   | 0      | 0.25   | 0.75   |
+| ------   | ------ | ------ | ------ |
+| Accuracy |        |        | 98.11% |
+
+
+
+<br>
 
 # Using HPC
 Paramshivay, Supercomputer of IIT BHU (Varanasi) was used for training of this model. 

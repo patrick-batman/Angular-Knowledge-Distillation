@@ -3,6 +3,7 @@ import numpy as np
 from tqdm import tqdm 
 import torch.nn as nn
 import torch.optim as optim
+import torch.nn.parallel
 import torchvision.transforms as transforms
 import pandas as pd
 from utils import mtcnn
@@ -14,10 +15,7 @@ import os
 
 
 root_dir ="CASIA_dataset/Images"
-model_save_dir = "output_logs"
 
-if not os.path.exists(model_save_dir):
-        os.makedirs(model_save_dir)
 
 # For a teacher model pretrained on CASIA-Webface
 from facenet_pytorch import InceptionResnetV1
@@ -47,7 +45,7 @@ student_model = CustomModel(student_model_base)
 
 
 #TRAINING LOSS FUNCTION
-def train_cosine_loss(teacher, student, train_loader, epochs, learning_rate, hidden_rep_loss_weight, ce_loss_weight, device, log_file="loss_log.txt"):
+def train_cosine_loss(teacher, student, train_loader, epochs, learning_rate, hidden_rep_loss_weight, ce_loss_weight, device, log_file="loss_log.txt", model_save_dir="output_logs"):
     ce_loss = nn.CrossEntropyLoss()
     cosine_loss = nn.CosineEmbeddingLoss()
     optimizer = optim.Adam(student.parameters(), lr=learning_rate)
@@ -57,13 +55,18 @@ def train_cosine_loss(teacher, student, train_loader, epochs, learning_rate, hid
     teacher.eval()  # Teacher set to evaluation mode
     student.train() # Student to train mode
 
+    if torch.cuda.is_available() and torch.cuda.device_count() > 1:
+        print("Using", torch.cuda.device_count(), "GPUs!")
+        teacher = nn.DataParallel(teacher)
+        student = nn.DataParallel(student)
+
     loss_values = []  # List to store loss values
 
-    for epoch in range(epochs):
+    for epoch in range(1,epochs+1):
         running_loss = 0.0
 
         # Use tqdm to display a progress bar
-        progress_bar = tqdm(train_loader, desc=f"Epoch {epoch+1}/{epochs}", leave=False)
+        progress_bar = tqdm(train_loader, desc=f"Epoch {epoch}/{epochs}", leave=False)
         for i,(inputs, labels) in enumerate(progress_bar):
 
             inputs, labels = inputs.to(device), labels.to(device)
@@ -95,22 +98,31 @@ def train_cosine_loss(teacher, student, train_loader, epochs, learning_rate, hid
             progress_bar.set_postfix({"Loss": running_loss / (i + 1)})  # Update the progress bar
 
         # Additional information
-        if epoch%5 == 0:
-            EPOCH = epoch
-            PATH = os.path.join(model_save_dir,f"model{epoch}.pt")
-            LOSS = running_loss
+        EPOCH = epoch
+        LOSS = running_loss
 
+        # Save the model after each epoch
+        torch.save({
+                    'epoch': EPOCH,
+                    'model_state_dict': student_model.state_dict(),
+                    'optimizer_state_dict': optimizer.state_dict(),
+                    'loss': LOSS,
+                    }, os.path.join(model_save_dir,f"current_model.pt")) 
+        
+        if epoch%5 == 0:
+            PATH = os.path.join(model_save_dir,f"model{epoch}.pt")
             torch.save({
                         'epoch': EPOCH,
                         'model_state_dict': student_model.state_dict(),
                         'optimizer_state_dict': optimizer.state_dict(),
                         'loss': LOSS,
-                        }, PATH)    
-            
-        print(f"Epoch {epoch+1}/{epochs}, Loss: {running_loss / len(train_loader)}")
+                        }, PATH) 
+
+
+        print(f"Epoch {epoch}/{epochs}, Loss: {running_loss / len(train_loader)}")
         
     # Save loss values to a file
-    log_file_path = os.join(model_save_dir, log_file)
+    log_file_path = os.path.join(model_save_dir, log_file)
     with open(log_file_path, 'w') as f:
         for loss_value in loss_values:
             f.write(f"{loss_value}\n")
@@ -118,19 +130,24 @@ def train_cosine_loss(teacher, student, train_loader, epochs, learning_rate, hid
 
 
 # EVALUATE STUDENT MODEL
-def check_accuracy(model, test_loader, device):
+def check_accuracy(model, test_loader, device, isTeacher=False):
     model.eval()  # Set model to evaluation mode
     correct = 0
     total = 0
+    if isTeacher:
+        model.classify = True
     with torch.no_grad():
         progress_bar = tqdm(test_loader, leave=False)
         for i, (inputs, labels) in enumerate(progress_bar):
             inputs, labels = inputs.to(device), labels.to(device)
-            outputs,_,_ = model(inputs)
+            if isTeacher:
+                outputs = model(inputs)
+            else: 
+                outputs,_,_ = model(inputs)
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum()
 
             progress_bar.set_postfix({"Current Accuracy": correct / (total)})  # Update the progress bar
 
-    print(f"Accuracy: {100 * correct / total}")
+    print(f"Accuracy = {100 * correct / total}")
