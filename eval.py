@@ -48,6 +48,8 @@ print(args)
 
 print("Using device: {} ".format(device))
 
+print("Evaluating on random {}k samples".format(int(test_size*500)))
+
 # Load Model
 model = student_model
 checkpoint = torch.load(model_path)
