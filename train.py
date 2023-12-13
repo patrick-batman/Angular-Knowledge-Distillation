@@ -12,7 +12,7 @@ parser.add_argument("--epochs",type=int)
 parser.add_argument("--lr",type=float)
 parser.add_argument("--lmda",type=float)
 parser.add_argument("--workers",type=int)
-parser.add_argument("save-dir",type=str)
+parser.add_argument("--save-dir",type=str)  
 parser.add_argument("--device")
 
 args = parser.parse_args()

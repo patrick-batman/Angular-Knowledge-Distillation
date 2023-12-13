@@ -63,10 +63,12 @@ python3 eval.py
 # Performance:
 
 ### CASIA-WebFace
+_Trained for 30 epochs_<br>
+_Evaluated on 50k random samples_
 
-| lambda   | 0      | 0.25   | 0.75   |
-| ------   | ------ | ------ | ------ |
-| Accuracy |        |        | 98.11% |
+| Lambda   |     0   | 0.25   | 0.75   |
+| ------   | ------  | ------ | ------ |
+| Accuracy | 98.87%  | 98.95%  | 99.08% |
 
 
 
